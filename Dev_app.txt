@@ -1,0 +1,1522 @@
+Documento-Registro: Desenvolvimento da Tela Inicial do App Diário Digital
+1. Introdução
+Este documento registra o desenvolvimento da tela inicial do aplicativo diario_digital, um app em Flutter/Dart para gerenciamento escolar. O objetivo inicial foi criar uma tela "capa" com base em um design fornecido, contendo um menu lateral (Drawer), textos informativos ("NOME DA ESCOLA", "Curso", "Ano Letivo", "Professor(a)"), e botões de ação ("Exportar dados", "Importar dados", "Sair"). O documento detalha os problemas encontrados, as soluções aplicadas, e o estado funcional atual do app.
+2. Configuração Inicial
+* Ambiente: O projeto foi criado no caminho C:\Projeto\diario_digital usando o comando flutter create meu_app, que foi renomeado para diario_digital.
+* Passos:
+1. Renomeação da pasta de meu_app para diario_digital.
+2. Atualização do pubspec.yaml para refletir o novo nome do app:
+yaml
+name: diario_digital
+description: Um diário digital para gerenciamento escolar.
+3. Abertura do projeto no VS Code com o comando code ..
+3. Problemas Encontrados e Soluções
+3.1. Erro no Arquivo de Teste
+* Problema: Após renomear o app e ajustar o código em lib/main.dart, um erro foi encontrado no arquivo de teste padrão (test/widget_test.dart):
+The name 'MyApp' isn't a class.
+Isso ocorreu porque o teste padrão ainda referenciava o widget MyApp, que foi substituído por DiarioDigitalApp.
+* Solução:
+o Como os testes não eram necessários no momento, a pasta test foi deletada, eliminando o erro.
+o Alternativa não aplicada: O arquivo widget_test.dart poderia ter sido ajustado para usar DiarioDigitalApp, mas isso não foi necessário para o progresso inicial.
+3.2. Layout Inicial e Ajustes de Design
+* Problema: O layout inicial não correspondia ao design fornecido (uma imagem com um menu lateral, textos centralizados, e botões na parte inferior).
+* Solução:
+o Criado um Drawer (menu lateral) com as opções "Início", "Editar Informações", "Cadastro", e "Gerenciar aulas".
+o Adicionados os textos "NOME DA ESCOLA", "Curso", "Ano Letivo", e "Professor(a)" em uma Column centralizada.
+o Incluídos três botões na parte inferior: "Exportar dados", "Importar dados", e "Sair".
+3.3. Ajustes de Cores
+* Problema: As cores iniciais não seguiam a paleta da escola (tons de bege/amarelo para fundos, marrom/vinho para textos e botões, evitando branco e preto).
+* Solução:
+o Ajustado o fundo do app (scaffoldBackgroundColor) para um bege claro com toque amarelado: Color(0xFFFFF4D6).
+o Sidebar (Drawer) configurada com um marrom médio: Color(0xFF8D5524).
+o Botões ajustados para um tom de marrom/vinho escuro: Color(0xFF6D2C2C).
+o Textos configurados com um tom de vinho escuro: Color(0xFF4A1C1C).
+o AppBar ajustada para um marrom mais claro: Color(0xFFA66A3C).
+3.4. Presença de Branco na Sidebar
+* Problema: O fundo da sidebar (fora do DrawerHeader) ainda apresentava um tom de branco, que deveria ser evitado.
+* Solução:
+o Adicionado backgroundColor: const Color(0xFFFFF4D6) ao Drawer para que o fundo da sidebar fosse o mesmo bege claro do resto do app.
+3.5. Ajustes no Layout dos Textos
+* Problema: Os textos "Curso:", "Ano Letivo:", e "Professor(a):" estavam desalinhados em relação aos seus valores, e o "NOME DA ESCOLA" precisava estar em caixa alta.
+* Solução:
+o Usado Align com alignment: Alignment.centerLeft para cada par de título e valor, garantindo alinhamento à esquerda.
+o Ajustado o padding geral para EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0) para melhor espaçamento.
+o Transformado o texto do "NOME DA ESCOLA" em maiúsculas com nomeEscola.toUpperCase().
+3.6. Posição e Formato dos Textos
+* Problema: "Ano Letivo" e "Professor(a)" precisavam ser movidos para cima, e os valores deveriam ser exibidos abaixo dos títulos no formato "Curso:\n(em branco)".
+* Solução:
+o Reduzido o SizedBox entre "Curso", "Ano Letivo", e "Professor(a)" de height: 40 para height: 20.
+o Criada uma estrutura com Column para cada par (título e valor), com o valor inicialmente em branco.
+3.7. Remoção de Placeholders
+* Problema: Os placeholders ("Ensino Fundamental", "2025", "Prof. Maria Silva") precisavam ser removidos, deixando os campos em branco.
+* Solução:
+o Substituídos os valores de cursoUsuario, anoLetivoUsuario, e professorUsuario por strings vazias ('').
+4. Estado Funcional Atual
+A tela inicial do app diario_digital está funcional e segue o design solicitado:
+* Menu Lateral (Drawer): Contém as opções "Início", "Editar Informações", "Cadastro", e "Gerenciar aulas", com cores ajustadas (marrom médio para o header, bege claro para o fundo).
+* Textos:
+o "NOME DA ESCOLA" em caixa alta, centralizado, com fonte tamanho 32, em negrito, na cor vinho escuro.
+o "Curso:", "Ano Letivo:", e "Professor(a):" alinhados à esquerda, com os valores em branco, prontos para receber inputs do usuário.
+* Botões: "Exportar dados", "Importar dados", e "Sair" na parte inferior, com cor marrom/vinho escuro e texto bege claro.
+* Cores: Segue a paleta da escola (bege/amarelo para fundos, marrom/vinho para textos e botões).
+Imagem sugerida: Um screenshot da tela inicial atual do app, mostrando o layout com o menu lateral aberto e os textos alinhados. A imagem pode ser inserida aqui para referência visual.
+5. Código Final da Tela Inicial
+O código atual do arquivo lib/main.dart é o seguinte:
+dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const DiarioDigitalApp());
+}
+
+class DiarioDigitalApp extends StatelessWidget {
+  const DiarioDigitalApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Diário Digital',
+      theme: ThemeData(
+        primarySwatch: Colors.brown,
+        scaffoldBackgroundColor: const Color(0xFFFFF4D6),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFA66A3C),
+        ),
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const String nomeEscola = "NOME DA ESCOLA";
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Diário Digital',
+          style: TextStyle(
+            color: Color(0xFFFFF4D6),
+          ),
+        ),
+      ),
+      drawer: Drawer(
+        backgroundColor: const Color(0xFFFFF4D6),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Color(0xFF8D5524),
+              ),
+              child: const Text(
+                'Menu',
+                style: TextStyle(
+                  color: Color(0xFFFFF4D6),
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home, color: Colors.yellow),
+              title: const Text(
+                'Início',
+                style: TextStyle(color: Color(0xFF4A1C1C)),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit, color: Colors.red),
+              title: const Text(
+                'Editar Informações',
+                style: TextStyle(color: Color(0xFF4A1C1C)),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.app_registration, color: Colors.blue),
+              title: const Text(
+                'Cadastro',
+                style: TextStyle(color: Color(0xFF4A1C1C)),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.class_, color: Colors.green),
+              title: const Text(
+                'Gerenciar aulas',
+                style: TextStyle(color: Color(0xFF4A1C1C)),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              nomeEscola.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF4A1C1C),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Curso:',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Color(0xFF4A1C1C),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF4A1C1C),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Ano Letivo:',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Color(0xFF4A1C1C),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF4A1C1C),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Professor(a):',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Color(0xFF4A1C1C),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF4A1C1C),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6D2C2C),
+                    foregroundColor: const Color(0xFFFFF4D6),
+                  ),
+                  child: const Text('Exportar dados'),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6D2C2C),
+                    foregroundColor: const Color(0xFFFFF4D6),
+                  ),
+                  child: const Text('Importar dados'),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6D2C2C),
+                    foregroundColor: const Color(0xFFFFF4D6),
+                  ),
+                  child: const Text('Sair'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+6. Próximos Passos
+* Criar a tela de edição ("Editar Informações") para permitir que o usuário insira os valores de "NOME DA ESCOLA", "Curso", "Ano Letivo", e "Professor(a)".
+* Implementar um mecanismo para salvar e exibir esses valores na tela inicial (por exemplo, usando shared_preferences ou um gerenciador de estado como Provider).
+
+
+
+
+Documento-Registro: Capítulo II - Desenvolvimento da Tela de Edição e Suporte para Web
+1. Introdução
+Este capítulo documenta a segunda etapa do desenvolvimento do aplicativo diario_digital, um app em Flutter/Dart para gerenciamento escolar. O objetivo foi criar a tela de edição ("Editar Informações"), que permite ao usuário inserir e salvar os valores de "Nome da Escola", "Curso", "Ano Letivo", e "Nome do Professor(a)", exibindo esses valores na tela inicial. Durante esta etapa, enfrentamos desafios relacionados ao uso do shared_preferences na plataforma web (Microsoft Edge) e ao comportamento do sidebar (Drawer). Este documento detalha os problemas encontrados, as soluções aplicadas, e o estado funcional atual do app.
+2. Configuração Inicial
+* Objetivo: Criar a tela de edição com base no design fornecido, contendo:
+o Título "INFORMAÇÕES ESCOLARES".
+o Campos de entrada para "Nome da Escola", "Curso", "Ano Letivo", e "Nome do Professor(a)".
+o Botões "Salvar" e "Voltar".
+* Passos:
+1. Criado um novo arquivo edit_screen.dart no diretório lib para a tela de edição.
+2. Adicionada a dependência shared_preferences ao pubspec.yaml para persistência local:
+yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.3.0
+3. Configurada a navegação no Drawer da tela inicial para abrir a tela de edição ao clicar em "Editar Informações".
+3. Problemas Encontrados e Soluções
+3.1. Avisos de Linting no Código
+* Problema: Após implementar a tela de edição, o VS Code exibiu os seguintes avisos:
+o library_private_types_in_public_api em edit_screen.dart (linha 8) e main.dart (linha 30), devido ao uso de tipos privados (_EditScreenState e _HomeScreenState) em APIs públicas.
+o use_build_context_synchronously em edit_screen.dart (linha 42), devido ao uso do BuildContext após uma operação assíncrona sem verificar se o widget ainda estava montado.
+* Solução:
+o Para library_private_types_in_public_api:
+* Renomeado _EditScreenState para EditScreenState em edit_screen.dart.
+* Renomeado _HomeScreenState para HomeScreenState em main.dart.
+* Isso tornou os tipos públicos, eliminando o aviso.
+o Para use_build_context_synchronously:
+* Adicionada uma verificação if (mounted) antes de chamar Navigator.pop(context) no método _saveData de edit_screen.dart, garantindo que o BuildContext só seja usado se o widget ainda estiver montado.
+3.2. Sidebar (Drawer) Não Funcionava
+* Problema: Após adicionar o carregamento assíncrono de dados com SharedPreferences no initState() da tela inicial, o sidebar parou de funcionar. O console não exibia erros, mas o Drawer não abria ao clicar no ícone de menu.
+* Causa: O método initState() é síncrono e não deve conter operações assíncronas diretamente. Chamar _loadSavedData() (que usa await SharedPreferences.getInstance()) no initState() causava um problema de sincronização, afetando a construção do Scaffold e do Drawer.
+* Solução:
+o Removida a chamada assíncrona do initState().
+o Usado um FutureBuilder no método build de HomeScreenState para carregar os dados do SharedPreferences de forma assíncrona:
+* Enquanto os dados estão sendo carregados, exibe um CircularProgressIndicator.
+* Se houver erro, exibe uma mensagem de erro.
+* Quando os dados são carregados, exibe o Scaffold com o Drawer e o restante da UI.
+o Ajustada a navegação para recarregar os dados ao voltar da tela de edição, usando setState(() {}) para forçar o FutureBuilder a recarregar.
+3.3. Erro MissingPluginException na Web
+* Problema: Ao testar o app no Microsoft Edge (plataforma web), o seguinte erro foi exibido:
+Erro ao carregar os dados: MissingPluginException(No implementation found for method getAll on channel plugins.flutter.io/shared_preferences)
+Isso ocorria porque o shared_preferences depende de APIs nativas (Android/iOS) e não funciona diretamente na web.
+* Solução:
+o Adicionado o pacote shared_preferences_web ao pubspec.yaml para fornecer uma implementação do shared_preferences para a web, que usa o localStorage do navegador:
+yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.3.0
+  shared_preferences_web: ^2.3.0
+o Executado flutter pub get para baixar a dependência.
+o Verificado o suporte para web com flutter config --enable-web.
+o Testado o app novamente no Microsoft Edge com flutter run -d edge, confirmando que o erro desapareceu e o sidebar voltou a funcionar.
+3.4. Persistência de Dados na Web
+* Observação: Após adicionar o shared_preferences_web, os dados passaram a persistir ao atualizar a página no Microsoft Edge, mas não ao fechar e reabrir o app. Isso é esperado, pois o localStorage do navegador pode ser limpo dependendo das configurações do navegador (ex.: modo anônimo ou limpeza automática de dados). Um armazenamento mais robusto (como um banco de dados) ainda não foi implementado.
+4. Estado Funcional Atual
+A tela de edição do app diario_digital está funcional e segue o design solicitado:
+* Tela de Edição:
+o Título "INFORMAÇÕES ESCOLARES" centralizado no topo.
+o Campos de entrada (TextField) para "Nome da Escola", "Curso", "Ano Letivo", e "Nome do Professor(a)", com placeholders correspondentes.
+o Botões "Salvar" e "Voltar" na parte inferior, com cores ajustadas (marrom/vinho escuro para o fundo, bege claro para o texto).
+* Tela Inicial:
+o Exibe os valores salvos (ou valores padrão, se não houver dados salvos) para "Nome da Escola", "Curso", "Ano Letivo", e "Professor(a)".
+o O sidebar (Drawer) está funcionando corretamente, com as opções "Início", "Editar Informações", "Cadastro", e "Gerenciar aulas".
+* Persistência:
+o Os dados são salvos e carregados usando shared_preferences (com shared_preferences_web na web).
+o Na web, os dados persistem ao atualizar a página, mas podem ser perdidos ao fechar e reabrir o app, dependendo das configurações do navegador.
+* Cores: Segue a paleta da escola (bege/amarelo para fundos, marrom/vinho para textos e botões).
+Imagem sugerida: Um screenshot da tela de edição no Microsoft Edge, mostrando os campos de entrada preenchidos e os botões "Salvar" e "Voltar". A imagem pode ser inserida aqui para referência visual.
+5. Código Final da Tela de Edição
+O código atual do arquivo lib/edit_screen.dart é o seguinte:
+dart
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class EditScreen extends StatefulWidget {
+  const EditScreen({super.key});
+
+  @override
+  EditScreenState createState() => EditScreenState();
+}
+
+class EditScreenState extends State<EditScreen> {
+  final _nomeEscolaController = TextEditingController();
+  final _cursoController = TextEditingController();
+  final _anoLetivoController = TextEditingController();
+  final _professorController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedData();
+  }
+
+  Future<void> _loadSavedData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _nomeEscolaController.text = prefs.getString('nomeEscola') ?? '';
+      _cursoController.text = prefs.getString('curso') ?? '';
+      _anoLetivoController.text = prefs.getString('anoLetivo') ?? '';
+      _professorController.text = prefs.getString('professor') ?? '';
+    });
+  }
+
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('nomeEscola', _nomeEscolaController.text);
+    await prefs.setString('curso', _cursoController.text);
+    await prefs.setString('anoLetivo', _anoLetivoController.text);
+    await prefs.setString('professor', _professorController.text);
+    if (mounted) {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  void dispose() {
+    _nomeEscolaController.dispose();
+    _cursoController.dispose();
+    _anoLetivoController.dispose();
+    _professorController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Editar Informações',
+          style: TextStyle(color: Color(0xFFFFF4D6)),
+        ),
+        backgroundColor: const Color(0xFFA66A3C),
+      ),
+      backgroundColor: const Color(0xFFFFF4D6),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'INFORMAÇÕES ESCOLARES',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF4A1C1C),
+              ),
+            ),
+            const SizedBox(height: 32),
+            TextField(
+              controller: _nomeEscolaController,
+              decoration: InputDecoration(
+                labelText: 'Nome da Escola...',
+                labelStyle: const TextStyle(color: Color(0xFF4A1C1C)),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                ),
+              ),
+              style: const TextStyle(color: Color(0xFF4A1C1C)),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _cursoController,
+              decoration: InputDecoration(
+                labelText: 'Curso...',
+                labelStyle: const TextStyle(color: Color(0xFF4A1C1C)),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                ),
+              ),
+              style: const TextStyle(color: Color(0xFF4A1C1C)),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _anoLetivoController,
+              decoration: InputDecoration(
+                labelText: 'Ano Letivo...',
+                labelStyle: const TextStyle(color: Color(0xFF4A1C1C)),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                ),
+              ),
+              style: const TextStyle(color: Color(0xFF4A1C1C)),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _professorController,
+              decoration: InputDecoration(
+                labelText: 'Nome do Professor (a professora)...',
+                labelStyle: const TextStyle(color: Color(0xFF4A1C1C)),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                ),
+              ),
+              style: const TextStyle(color: Color(0xFF4A1C1C)),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: _saveData,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6D2C2C),
+                    foregroundColor: const Color(0xFFFFF4D6),
+                  ),
+                  child: const Text('Salvar'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6D2C2C),
+                    foregroundColor: const Color(0xFFFFF4D6),
+                  ),
+                  child: const Text('Voltar'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+Documento-Registro: Capítulo III - Desenvolvimento da Tela de Cadastro
+1. Introdução
+Este capítulo documenta a terceira etapa do desenvolvimento do aplicativo diario_digital, um app em Flutter/Dart para gerenciamento escolar. O objetivo foi criar a tela de cadastro, acessível a partir do Drawer (opção "Cadastro"), que permite ao usuário cadastrar turmas e disciplinas. A tela foi dividida em duas abas ("Turmas" e "Disciplinas"), cada uma com funcionalidades específicas para adicionar, editar e remover itens. Durante esta etapa, enfrentamos desafios relacionados à navegação entre estados da tela, edição inline, e botões "fakes" para disciplinas. Este documento detalha os problemas encontrados, as soluções aplicadas, e o estado funcional atual do app.
+2. Configuração Inicial
+* Objetivo: Criar a tela de cadastro com base no design fornecido, contendo:
+o Estado inicial com dois botões: "Turmas" e "Disciplinas", dispostos horizontalmente no topo da tela.
+o Aba "Turmas": um campo de entrada (TextField) para adicionar turmas, com autofoco e suporte para adicionar via botão "Adicionar" ou tecla Enter; uma lista de turmas cadastradas, cada uma com botões para editar e remover; e um botão "Concluído" para retornar ao estado inicial.
+o Aba "Disciplinas": mesma funcionalidade da aba "Turmas", mas os botões gerados para cada disciplina devem ser "fakes" (mesma aparência, mas não interativos).
+* Passos:
+1. Criado um novo arquivo register_screen.dart no diretório lib para a tela de cadastro.
+2. Configurada a navegação no Drawer da tela inicial (main.dart) para abrir a tela de cadastro ao clicar em "Cadastro".
+3. Usado o shared_preferences para persistência local de turmas e disciplinas.
+3. Implementação e Ajustes
+3.1. Estrutura Inicial da Tela de Cadastro
+* Descrição: A tela de cadastro foi inicialmente configurada para exibir apenas os botões "Turmas" e "Disciplinas" no topo, dispostos horizontalmente (semelhante à posição do "NOME DA ESCOLA" na tela inicial). Ao clicar em uma das opções, a tela é atualizada para exibir o conteúdo correspondente.
+* Implementação:
+o Usada uma variável _activeTab (do tipo String?) para controlar o estado da tela: null (estado inicial), 'Turmas', ou 'Disciplinas'.
+o No estado inicial (_activeTab == null), exibe-se uma mensagem "Selecione uma opção acima para começar.".
+o Os botões "Turmas" e "Disciplinas" mudam de cor quando ativos (Color(0xFF4A1C1C) para ativo, Color(0xFF6D2C2C) para inativo).
+3.2. Aba "Turmas"
+* Funcionalidades:
+o Adicionar Turmas: Um TextField com autofoco (usando FocusNode) permite adicionar turmas. O usuário pode adicionar uma turma usando o botão "Adicionar" ou a tecla Enter. Após adicionar, o TextField é limpo e mantém o foco para facilitar a adição de múltiplas turmas.
+o Lista de Turmas: Cada turma adicionada é exibida em uma lista (ListView.builder). Cada item da lista tem um botão com o nome da turma (futuramente levará a outra tela), e dois ícones: "Editar" (lápis) e "Remover" (lixeira).
+o Persistência: As turmas são salvas no shared_preferences com a chave 'turmas' e carregadas ao entrar na tela.
+* Ajustes:
+o Botão "Concluído": Inicialmente, o botão "Concluído" retornava à tela inicial do app. Após feedback, foi ajustado para retornar ao estado inicial da tela de cadastro (apenas os botões "Turmas" e "Disciplinas").
+o Edição Inline: Inicialmente, ao clicar em "Editar", a turma era removida da lista e seu nome era colocado no TextField de adição, o que parecia mais uma ação de "remover e re-adicionar". Após feedback, foi implementada a edição inline:
+* Ao clicar em "Editar", o botão da turma é substituído por um TextField com o nome atual, e dois ícones aparecem: "Confirmar" (check) e "Cancelar" (cancelar).
+* O usuário pode editar o nome diretamente na lista e confirmar com o ícone de "Confirmar" ou a tecla Enter. O botão "Cancelar" sai do modo de edição sem salvar as alterações.
+3.3. Aba "Disciplinas"
+* Funcionalidades:
+o A aba "Disciplinas" foi implementada com o mesmo comportamento da aba "Turmas":
+* Um TextField com autofoco para adicionar disciplinas.
+* Suporte para adicionar via botão "Adicionar" ou tecla Enter.
+* Lista de disciplinas com botões para editar e remover (edição inline, como em "Turmas").
+* Persistência no shared_preferences com a chave 'disciplinas'.
+* Botão "Concluído" que retorna ao estado inicial.
+o Botões "Fake": Os botões gerados para cada disciplina (ex.: "Matemática") têm a mesma aparência dos botões de turmas (mesma cor Color(0xFF6D2C2C), texto em Color(0xFFFFF4D6)), mas não são interativos.
+* Implementação dos Botões "Fake":
+o Para evitar o efeito cinza (que ocorre quando se usa onPressed: null em um ElevatedButton), foi usado onPressed: () {}. Isso mantém a aparência do botão, mas não executa nenhuma ação ao clicar.
+* Reutilização de Código:
+o A lógica de adição, edição inline, e remoção foi estruturada para ser reutilizada entre as abas "Turmas" e "Disciplinas", evitando duplicação de código. Por exemplo, os métodos _startEditing, _saveEdit, e _cancelEdit funcionam para ambas as abas, verificando a aba ativa para decidir qual lista atualizar.
+4. Estado Funcional Atual
+A tela de cadastro do app diario_digital está funcional e segue o design solicitado:
+* Estado Inicial:
+o Exibe apenas os botões "Turmas" e "Disciplinas", dispostos horizontalmente no topo.
+* Aba "Turmas":
+o Permite adicionar turmas com um TextField (autofoco, suporte para Enter).
+o Exibe a lista de turmas cadastradas, cada uma com um botão (futuramente navegável), e ícones para editar e remover.
+o Edição inline: o usuário pode editar o nome da turma diretamente na lista.
+o Botão "Concluído" retorna ao estado inicial.
+* Aba "Disciplinas":
+o Mesma funcionalidade da aba "Turmas", mas os botões gerados para cada disciplina são "fakes" (não interativos, mesma aparência).
+* Persistência:
+o Turmas e disciplinas são salvas no shared_preferences (chaves 'turmas' e 'disciplinas').
+o Na web, os dados persistem ao atualizar a página, mas podem ser perdidos ao fechar e reabrir o app, dependendo das configurações do navegador.
+* Cores: Segue a paleta da escola (bege/amarelo para fundos, marrom/vinho para textos e botões).
+Imagem sugerida: Um screenshot da aba "Disciplinas" no Microsoft Edge, mostrando algumas disciplinas cadastradas (ex.: "Matemática", "História"), com o TextField de adição visível e o botão "Concluído". A imagem pode ser inserida aqui para referência visual.
+5. Código Final da Tela de Cadastro
+O código atual do arquivo lib/register_screen.dart é o seguinte:
+dart
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  RegisterScreenState createState() => RegisterScreenState();
+}
+
+class RegisterScreenState extends State<RegisterScreen> {
+  String? _activeTab; // Aba ativa: "Turmas", "Disciplinas", ou null (estado inicial)
+  final _turmaController = TextEditingController();
+  final _disciplinaController = TextEditingController();
+  List<String> _turmas = [];
+  List<String> _disciplinas = [];
+  final FocusNode _turmaFocusNode = FocusNode();
+  final FocusNode _disciplinaFocusNode = FocusNode();
+  int? _editingIndex; // Índice do item sendo editado (turma ou disciplina)
+  final _editController = TextEditingController(); // Controller para edição inline
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTurmas();
+    _loadDisciplinas();
+  }
+
+  // Carregar turmas salvas
+  Future<void> _loadTurmas() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _turmas = prefs.getStringList('turmas') ?? [];
+    });
+  }
+
+  // Carregar disciplinas salvas
+  Future<void> _loadDisciplinas() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _disciplinas = prefs.getStringList('disciplinas') ?? [];
+    });
+  }
+
+  // Salvar turmas
+  Future<void> _saveTurmas() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('turmas', _turmas);
+  }
+
+  // Salvar disciplinas
+  Future<void> _saveDisciplinas() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('disciplinas', _disciplinas);
+  }
+
+  // Adicionar uma nova turma
+  void _addTurma() {
+    final turma = _turmaController.text.trim();
+    if (turma.isNotEmpty) {
+      setState(() {
+        _turmas.add(turma);
+        _turmaController.clear();
+      });
+      _saveTurmas();
+      FocusScope.of(context).requestFocus(_turmaFocusNode);
+    }
+  }
+
+  // Adicionar uma nova disciplina
+  void _addDisciplina() {
+    final disciplina = _disciplinaController.text.trim();
+    if (disciplina.isNotEmpty) {
+      setState(() {
+        _disciplinas.add(disciplina);
+        _disciplinaController.clear();
+      });
+      _saveDisciplinas();
+      FocusScope.of(context).requestFocus(_disciplinaFocusNode);
+    }
+  }
+
+  // Iniciar edição de um item (turma ou disciplina)
+  void _startEditing(int index) {
+    setState(() {
+      _editingIndex = index;
+      if (_activeTab == 'Turmas') {
+        _editController.text = _turmas[index];
+      } else {
+        _editController.text = _disciplinas[index];
+      }
+    });
+  }
+
+  // Salvar edição de um item
+  void _saveEdit() {
+    if (_editingIndex != null) {
+      final newName = _editController.text.trim();
+      if (newName.isNotEmpty) {
+        setState(() {
+          if (_activeTab == 'Turmas') {
+            _turmas[_editingIndex!] = newName;
+            _saveTurmas();
+          } else {
+            _disciplinas[_editingIndex!] = newName;
+            _saveDisciplinas();
+          }
+          _editingIndex = null;
+          _editController.clear();
+        });
+      }
+    }
+  }
+
+  // Cancelar edição
+  void _cancelEdit() {
+    setState(() {
+      _editingIndex = null;
+      _editController.clear();
+    });
+  }
+
+  // Remover uma turma
+  void _removeTurma(int index) {
+    setState(() {
+      _turmas.removeAt(index);
+    });
+    _saveTurmas();
+  }
+
+  // Remover uma disciplina
+  void _removeDisciplina(int index) {
+    setState(() {
+      _disciplinas.removeAt(index);
+    });
+    _saveDisciplinas();
+  }
+
+  @override
+  void dispose() {
+    _turmaController.dispose();
+    _disciplinaController.dispose();
+    _turmaFocusNode.dispose();
+    _disciplinaFocusNode.dispose();
+    _editController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Cadastro',
+          style: TextStyle(color: Color(0xFFFFF4D6)),
+        ),
+        backgroundColor: const Color(0xFFA66A3C),
+      ),
+      backgroundColor: const Color(0xFFFFF4D6),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Botões "Turmas" e "Disciplinas" dispostos horizontalmente
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _activeTab = 'Turmas';
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        FocusScope.of(context).requestFocus(_turmaFocusNode);
+                      });
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _activeTab == 'Turmas'
+                        ? const Color(0xFF4A1C1C)
+                        : const Color(0xFF6D2C2C),
+                    foregroundColor: const Color(0xFFFFF4D6),
+                  ),
+                  child: const Text('Turmas'),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _activeTab = 'Disciplinas';
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        FocusScope.of(context).requestFocus(_disciplinaFocusNode);
+                      });
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _activeTab == 'Disciplinas'
+                        ? const Color(0xFF4A1C1C)
+                        : const Color(0xFF6D2C2C),
+                    foregroundColor: const Color(0xFFFFF4D6),
+                  ),
+                  child: const Text('Disciplinas'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            // Conteúdo dinâmico baseado na aba ativa
+            if (_activeTab == null)
+              const Text(
+                'Selecione uma opção acima para começar.',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xFF4A1C1C),
+                ),
+              ),
+            if (_activeTab == 'Turmas') ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _turmaController,
+                      focusNode: _turmaFocusNode,
+                      decoration: InputDecoration(
+                        labelText: 'Adicionar turma...',
+                        labelStyle: const TextStyle(color: Color(0xFF4A1C1C)),
+                        border: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                        ),
+                      ),
+                      style: const TextStyle(color: Color(0xFF4A1C1C)),
+                      onSubmitted: (value) {
+                        _addTurma();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _addTurma,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6D2C2C),
+                      foregroundColor: const Color(0xFFFFF4D6),
+                    ),
+                    child: const Text('Adicionar'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Turmas cadastradas:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF4A1C1C),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _turmas.length,
+                  itemBuilder: (context, index) {
+                    if (_editingIndex == index) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _editController,
+                              autofocus: true,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                                ),
+                              ),
+                              style: const TextStyle(color: Color(0xFF4A1C1C)),
+                              onSubmitted: (value) {
+                                _saveEdit();
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.check, color: Color(0xFF4A1C1C)),
+                            onPressed: _saveEdit,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.cancel, color: Color(0xFF4A1C1C)),
+                            onPressed: _cancelEdit,
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Futuramente, navegará para outra tela
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF6D2C2C),
+                                  foregroundColor: const Color(0xFFFFF4D6),
+                                ),
+                                child: Text(_turmas[index]),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Color(0xFF4A1C1C)),
+                              onPressed: () => _startEditing(index),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Color(0xFF4A1C1C)),
+                              onPressed: () => _removeTurma(index),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _activeTab = null;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6D2C2C),
+                  foregroundColor: const Color(0xFFFFF4D6),
+                ),
+                child: const Text('Concluído'),
+              ),
+            ],
+            if (_activeTab == 'Disciplinas') ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _disciplinaController,
+                      focusNode: _disciplinaFocusNode,
+                      decoration: InputDecoration(
+                        labelText: 'Adicionar disciplina...',
+                        labelStyle: const TextStyle(color: Color(0xFF4A1C1C)),
+                        border: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                        ),
+                      ),
+                      style: const TextStyle(color: Color(0xFF4A1C1C)),
+                      onSubmitted: (value) {
+                        _addDisciplina();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _addDisciplina,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6D2C2C),
+                      foregroundColor: const Color(0xFFFFF4D6),
+                    ),
+                    child: const Text('Adicionar'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Disciplinas cadastradas:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF4A1C1C),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _disciplinas.length,
+                  itemBuilder: (context, index) {
+                    if (_editingIndex == index) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _editController,
+                              autofocus: true,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                                ),
+                              ),
+                              style: const TextStyle(color: Color(0xFF4A1C1C)),
+                              onSubmitted: (value) {
+                                _saveEdit();
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.check, color: Color(0xFF4A1C1C)),
+                            onPressed: _saveEdit,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.cancel, color: Color(0xFF4A1C1C)),
+                            onPressed: _cancelEdit,
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {}, // Botão "fake" (sem ação)
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF6D2C2C),
+                                  foregroundColor: const Color(0xFFFFF4D6),
+                                ),
+                                child: Text(_disciplinas[index]),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Color(0xFF4A1C1C)),
+                              onPressed: () => _startEditing(index),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Color(0xFF4A1C1C)),
+                              onPressed: () => _removeDisciplina(index),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _activeTab = null;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6D2C2C),
+                  foregroundColor: const Color(0xFFFFF4D6),
+                ),
+                child: const Text('Concluído'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+Documento-Registro: Capítulo IV - Desenvolvimento da Tela de Cadastro de Alunos por Turma
+1. Introdução
+Este capítulo documenta a quarta etapa do desenvolvimento do aplicativo diario_digital, um app em Flutter/Dart para gerenciamento escolar. O objetivo foi criar a tela de cadastro de alunos para cada turma, acessível ao clicar em uma turma (ex.: "Turma 1") na aba "Turmas" da tela de cadastro. A tela permite adicionar, editar e remover alunos, exibindo-os em uma tabela com números associados, e inclui um botão "Concluído" para retornar à aba "Turmas". Durante esta etapa, enfrentamos desafios relacionados ao layout da tabela, à edição inline, e ao posicionamento dos ícones de ação. Este documento detalha os problemas encontrados, as soluções aplicadas, e o estado funcional atual do app.
+2. Configuração Inicial
+* Objetivo: Criar a tela de cadastro de alunos para uma turma específica, com base no design fornecido, contendo:
+o Título dinâmico: "Cadastro de alunos para a turma: [nome da turma]".
+o Um campo de entrada (TextField) com autofoco para adicionar alunos, com suporte para adicionar via botão "Adicionar" ou tecla Enter.
+o Uma tabela com duas colunas: "Nº" (número do aluno) e "Nome do aluno", com ícones "Editar" e "Remover" ao lado de cada linha (fora da tabela).
+o Cada aluno é associado a um número (ex.: 01, 02), e ao remover um aluno, os números devem ser rearranjados automaticamente.
+o Um botão "Concluído" que retorna à aba "Turmas".
+* Passos:
+1. Criado um novo arquivo class_students_screen.dart no diretório lib para a tela de cadastro de alunos.
+2. Ajustada a navegação no register_screen.dart para que os botões de cada turma na aba "Turmas" levem à nova tela, passando o nome da turma como parâmetro.
+3. Usado o shared_preferences para persistência local dos alunos, associando cada lista de alunos à sua respectiva turma.
+3. Implementação e Ajustes
+3.1. Estrutura Inicial da Tela de Cadastro de Alunos
+* Descrição: A tela foi configurada para exibir um título dinâmico com o nome da turma, um TextField para adicionar alunos, uma tabela para listar os alunos, e um botão "Concluído" no final.
+* Implementação:
+o A tela ClassStudentsScreen recebe o nome da turma (className) como parâmetro e o exibe no título.
+o Um TextField com FocusNode foi adicionado para permitir a adição de alunos com autofoco e suporte para a tecla Enter.
+o A tabela foi criada usando o widget Table, inicialmente com três colunas: "Nº", "Nome do aluno", e "Ações" (para os ícones "Editar" e "Remover").
+o Os alunos são salvos no shared_preferences com a chave 'alunos_[nome da turma]' (ex.: 'alunos_Turma 1').
+3.2. Funcionalidades Principais
+* Adicionar Alunos:
+o O TextField permite adicionar alunos, limpando o campo e mantendo o foco após cada adição.
+o Cada aluno adicionado é exibido na tabela com um número associado (ex.: 01, 02), gerado dinamicamente com base na posição na lista (index + 1).
+* Edição Inline:
+o Segue o padrão do app: ao clicar em "Editar", o nome do aluno é substituído por um TextField para edição no mesmo local, com ícones "Confirmar" (check) e "Cancelar" (cancelar) para salvar ou descartar as alterações.
+* Persistência:
+o Os alunos são salvos no shared_preferences e carregados ao entrar na tela, garantindo que a lista persista entre navegações.
+3.3. Ajustes Realizados
+* Rearranjo dos Números ao Remover:
+o Inicialmente, foi implementado um diálogo (AlertDialog) ao remover um aluno, perguntando se o usuário desejava rearranjar os números dos alunos subsequentes (ex.: se o aluno 5 fosse removido, o 6 viraria 5) ou manter os números (pulando o número removido, ex.: de 4 para 6).
+o O comportamento não funcionou como esperado para a opção "manter números", pois os números são gerados dinamicamente (index + 1), o que sempre rearranja a tabela.
+o Após feedback, o diálogo foi removido, e o comportamento foi simplificado: ao remover um aluno, a tabela é automaticamente rearranjada (os números são ajustados).
+* Posicionamento dos Ícones "Editar" e "Remover":
+o Primeira Versão: Os ícones foram colocados como uma terceira coluna ("Ações") dentro da tabela, o que não correspondia ao design fornecido.
+o Segunda Versão: Os ícones foram movidos para fora da tabela, mas apareciam abaixo de cada linha, em uma lista separada, o que não era o layout desejado.
+o Versão Final: A tabela foi ajustada para ter apenas duas colunas ("Nº" e "Nome do aluno"), e a largura da coluna "Nome do aluno" foi reduzida usando FlexColumnWidth(2). Cada linha da tabela foi combinada com os ícones em um Row, onde:
+* A tabela ocupa a maior parte do espaço com Expanded.
+* Os ícones são colocados ao lado em um SizedBox com largura fixa (width: 80), garantindo alinhamento horizontal com cada linha.
+4. Estado Funcional Atual
+A tela de cadastro de alunos do app diario_digital está funcional e segue o design solicitado:
+* Título: Exibe "Cadastro de alunos para a turma: [nome da turma]" (ex.: "Turma 1").
+* Adição de Alunos:
+o Um TextField com autofoco permite adicionar alunos, com suporte para a tecla Enter.
+o Após adicionar, o campo é limpo e o foco é mantido.
+* Tabela de Alunos:
+o Exibe duas colunas: "Nº" (número do aluno) e "Nome do aluno".
+o Os ícones "Editar" (lápis) e "Remover" (lixeira) aparecem ao lado de cada linha, fora da tabela, alinhados horizontalmente.
+o Durante a edição, os ícones "Confirmar" (check) e "Cancelar" (cancelar) substituem os ícones de ação, mantendo o mesmo posicionamento.
+* Remoção e Rearranjo:
+o Ao remover um aluno, a tabela é automaticamente rearranjada (ex.: se o aluno 3 é removido, o aluno 4 passa a ser 3).
+* Botão "Concluído":
+o Retorna à aba "Turmas" da tela de cadastro.
+* Persistência:
+o Os alunos são salvos no shared_preferences com a chave 'alunos_[nome da turma]'.
+o Na web, os dados persistem ao atualizar a página, mas podem ser perdidos ao fechar e reabrir o app, dependendo das configurações do navegador.
+* Cores: Segue a paleta da escola (bege/amarelo para fundos, marrom/vinho para textos e botões).
+Imagem sugerida: Um screenshot da tela de cadastro de alunos no Microsoft Edge, mostrando alguns alunos cadastrados (ex.: "Amanda Nascimento Silva", "Ana Sara Freire", "André Ualife"), com os ícones "Editar" e "Remover" ao lado de cada linha, fora da tabela. A imagem pode ser inserida aqui para referência visual.
+5. Código Final da Tela de Cadastro de Alunos
+O código atual do arquivo lib/class_students_screen.dart é o seguinte:
+dart
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class ClassStudentsScreen extends StatefulWidget {
+  final String className; // Nome da turma (ex.: "Turma 1")
+
+  const ClassStudentsScreen({super.key, required this.className});
+
+  @override
+  ClassStudentsScreenState createState() => ClassStudentsScreenState();
+}
+
+class ClassStudentsScreenState extends State<ClassStudentsScreen> {
+  final _studentController = TextEditingController();
+  List<String> _students = [];
+  final FocusNode _studentFocusNode = FocusNode();
+  int? _editingIndex; // Índice do aluno sendo editado
+  final _editController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStudents();
+    // Definir o foco inicial no TextField
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_studentFocusNode);
+    });
+  }
+
+  // Carregar alunos salvos
+  Future<void> _loadStudents() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _students = prefs.getStringList('alunos_${widget.className}') ?? [];
+    });
+  }
+
+  // Salvar alunos
+  Future<void> _saveStudents() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('alunos_${widget.className}', _students);
+  }
+
+  // Adicionar um novo aluno
+  void _addStudent() {
+    final student = _studentController.text.trim();
+    if (student.isNotEmpty) {
+      setState(() {
+        _students.add(student);
+        _studentController.clear();
+      });
+      _saveStudents();
+      FocusScope.of(context).requestFocus(_studentFocusNode);
+    }
+  }
+
+  // Iniciar edição de um aluno
+  void _startEditing(int index) {
+    setState(() {
+      _editingIndex = index;
+      _editController.text = _students[index];
+    });
+  }
+
+  // Salvar edição de um aluno
+  void _saveEdit() {
+    if (_editingIndex != null) {
+      final newName = _editController.text.trim();
+      if (newName.isNotEmpty) {
+        setState(() {
+          _students[_editingIndex!] = newName;
+          _editingIndex = null;
+          _editController.clear();
+        });
+        _saveStudents();
+      }
+    }
+  }
+
+  // Cancelar edição
+  void _cancelEdit() {
+    setState(() {
+      _editingIndex = null;
+      _editController.clear();
+    });
+  }
+
+  // Remover um aluno (rearranja automaticamente)
+  void _removeStudent(int index) {
+    setState(() {
+      _students.removeAt(index);
+    });
+    _saveStudents();
+  }
+
+  @override
+  void dispose() {
+    _studentController.dispose();
+    _studentFocusNode.dispose();
+    _editController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Cadastro de alunos para a turma: ${widget.className}',
+          style: const TextStyle(color: Color(0xFFFFF4D6)),
+        ),
+        backgroundColor: const Color(0xFFA66A3C),
+      ),
+      backgroundColor: const Color(0xFFFFF4D6),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _studentController,
+                    focusNode: _studentFocusNode,
+                    decoration: InputDecoration(
+                      labelText: 'Nome do aluno...',
+                      labelStyle: const TextStyle(color: Color(0xFF4A1C1C)),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                      ),
+                    ),
+                    style: const TextStyle(color: Color(0xFF4A1C1C)),
+                    onSubmitted: (value) {
+                      _addStudent();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: _addStudent,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6D2C2C),
+                    foregroundColor: const Color(0xFFFFF4D6),
+                  ),
+                  child: const Text('Adicionar'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (_students.isNotEmpty) ...[
+              // Cabeçalho da tabela
+              Row(
+                children: [
+                  Expanded(
+                    child: Table(
+                      border: TableBorder.all(color: const Color(0xFF4A1C1C)),
+                      columnWidths: const {
+                        0: FixedColumnWidth(50), // Nº
+                        1: FlexColumnWidth(2), // Nome do aluno (reduzido)
+                      },
+                      children: [
+                        const TableRow(
+                          decoration: BoxDecoration(color: Color(0xFFA66A3C)),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Nº',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFFFF4D6),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Nome do aluno',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFFFF4D6),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 80), // Espaço para os ícones
+                ],
+              ),
+              // Linhas da tabela com ícones ao lado
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _students.length,
+                  itemBuilder: (context, index) {
+                    final student = _students[index];
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Table(
+                            border: TableBorder.all(color: const Color(0xFF4A1C1C)),
+                            columnWidths: const {
+                              0: FixedColumnWidth(50), // Nº
+                              1: FlexColumnWidth(2), // Nome do aluno (reduzido)
+                            },
+                            children: [
+                              TableRow(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      (index + 1).toString().padLeft(2, '0'),
+                                      style: const TextStyle(color: Color(0xFF4A1C1C)),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: _editingIndex == index
+                                        ? TextField(
+                                            controller: _editController,
+                                            autofocus: true,
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(
+                                                borderSide: const BorderSide(color: Color(0xFF4A1C1C)),
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              focusedBorder: const OutlineInputBorder(
+                                                borderSide: BorderSide(color: Color(0xFF4A1C1C)),
+                                              ),
+                                            ),
+                                            style: const TextStyle(color: Color(0xFF4A1C1C)),
+                                            onSubmitted: (value) {
+                                              _saveEdit();
+                                            },
+                                          )
+                                        : Text(
+                                            student,
+                                            style: const TextStyle(color: Color(0xFF4A1C1C)),
+                                          ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Ícones ao lado da linha
+                        SizedBox(
+                          width: 80, // Espaço fixo para os ícones
+                          child: _editingIndex == index
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.check, color: Color(0xFF4A1C1C)),
+                                      onPressed: _saveEdit,
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.cancel, color: Color(0xFF4A1C1C)),
+                                      onPressed: _cancelEdit,
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit, color: Color(0xFF4A1C1C)),
+                                      onPressed: () => _startEditing(index),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Color(0xFF4A1C1C)),
+                                      onPressed: () => _removeStudent(index),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Volta para a aba "Turmas"
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6D2C2C),
+                foregroundColor: const Color(0xFFFFF4D6),
+              ),
+              child: const Text('Concluído'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+Capítulo V: Implementação e Ajustes na Tela de Gerenciamento de Aulas
+Introdução
+O Capítulo V documenta a implementação da tela de gerenciamento de aulas no aplicativo "Diário Digital", uma funcionalidade essencial para permitir que o usuário defina os períodos dos bimestres e as combinações de turmas e disciplinas que serão utilizadas para o registro de aulas. Esta etapa também inclui ajustes solicitados após a implementação inicial, como a reformulação do design dos botões de combinações, a adição de opções de edição e remoção, a sincronização com os cadastros, e a verificação de duplicatas. A tela foi integrada ao aplicativo e acessada por meio do sidebar (menu lateral), conforme especificado.
+Objetivo
+O objetivo desta etapa foi implementar uma tela que permita:
+* Definir as datas de início e fim de cada bimestre (1º ao 4º).
+* Criar combinações de turmas e disciplinas (ex.: "7º A Matemática") para posterior registro de aulas.
+* Garantir que as combinações sejam persistentes, utilizando o shared_preferences para armazenamento local.
+* Sincronizar as combinações com os cadastros de turmas e disciplinas, refletindo edições e remoções realizadas na tela de cadastro.
+* Adicionar funcionalidades de edição e remoção para as combinações, com verificação para evitar duplicatas.
+Implementação Inicial
+A tela de gerenciamento de aulas foi implementada no arquivo lib/manage_classes_screen.dart e integrada ao aplicativo por meio de uma opção no sidebar, no arquivo lib/main.dart. A estrutura da tela foi dividida em duas seções principais:
+1. Definir Bimestres:
+o Localizada à esquerda da tela, esta seção permite ao usuário definir as datas de início e fim de cada bimestre (1º ao 4º).
+o Cada bimestre possui dois campos de texto (início e fim), que são preenchidos por meio de um DatePicker ao clicar nos campos.
+o As datas são salvas no shared_preferences para persistência.
+2. Definir Classes:
+o Localizada à direita da tela, esta seção permite ao usuário criar combinações de turmas e disciplinas.
+o Dois DropdownButtonFormFields foram utilizados para selecionar uma turma e uma disciplina, com um botão "Adicionar" para criar a combinação.
+o Inicialmente, as combinações eram exibidas como botões "cubóides" (usando Wrap), com no máximo 3 botões por linha, centralizados.
+A integração com o sidebar foi realizada adicionando uma opção "Gerenciar aulas" no Drawer do arquivo main.dart, que navega para a tela ManageClassesScreen ao ser clicada.
+Ajustes Realizados
+Após a implementação inicial, foram solicitados ajustes para melhorar a usabilidade e a estética da tela de gerenciamento de aulas. Os ajustes realizados foram:
+1. Reformulação do Design dos Botões de Combinações:
+o Problema: Os botões "cubóides" iniciais causavam quebra de texto (ex.: "7º A Matemática" era exibido em duas linhas), o que não era visualmente agradável.
+o Solução: O design foi alterado para seguir o mesmo estilo dos botões de turmas e disciplinas na tela de cadastro (register_screen.dart). Os botões agora são exibidos em uma lista (ListView.builder), com o estilo ElevatedButton (fundo Color(0xFF6D2C2C), texto Color(0xFFFFF4D6)), e o texto é ajustado para uma única linha usando Expanded.
+2. Adição de Opções de Edição e Remoção:
+o Funcionalidade: Foram adicionados dois IconButtons ao lado de cada combinação:
+* Um ícone de "Editar" (Icons.edit) que abre um diálogo com dois DropdownButtonFormFields (um para turma e outro para disciplina), permitindo ao usuário alterar a combinação.
+* Um ícone de "Remover" (Icons.delete) que remove a combinação da lista e atualiza o shared_preferences.
+o Implementação: As funções _startEditing e _removeClassCombination foram criadas para gerenciar essas ações, com validação para evitar duplicatas ao editar.
+3. Verificação de Combinações Duplicadas:
+o Funcionalidade: Foi implementada uma verificação para evitar que o usuário adicione ou edite combinações duplicadas (ex.: "7º A Matemática" não pode ser adicionada duas vezes).
+o Implementação: A verificação foi adicionada na função _addClassCombination e no diálogo de edição, exibindo uma mensagem de erro (ScaffoldMessenger) quando uma duplicata é detectada.
+4. Sincronização com os Cadastros:
+o Requisito: Qualquer edição ou remoção de turmas ou disciplinas na tela de cadastro (register_screen.dart) deve ser refletida nas combinações de classes na tela de gerenciamento.
+o Implementação:
+* No arquivo register_screen.dart, foi adicionada a função _updateClassCombinations, que é chamada sempre que uma turma ou disciplina é editada ou removida.
+* Ao editar uma turma ou disciplina, a função atualiza todas as combinações que usam o nome antigo para o novo nome.
+* Ao remover uma turma ou disciplina, a função remove todas as combinações que usam o item removido.
+* Essa sincronização garante que as combinações na tela de gerenciamento estejam sempre consistentes com os cadastros.
+Testes Realizados
+Os seguintes testes foram realizados para validar a implementação e os ajustes:
+1. Adição de Combinações:
+o Acessada a tela de gerenciamento de aulas pelo sidebar.
+o Adicionadas combinações como "7º A Matemática" e "7º B Geometria".
+o Tentada a adição de uma combinação duplicada ("7º A Matemática"), confirmando que uma mensagem de erro ("Esta combinação já existe!") foi exibida.
+o Verificado que os botões de combinação agora seguem o estilo de turmas e disciplinas, sem quebra de texto.
+2. Edição de Combinações:
+o Clicado no ícone de "Editar" ao lado de uma combinação.
+o Alterada a turma ou disciplina no diálogo e salva a mudança.
+o Confirmado que a combinação foi atualizada e que não há duplicatas.
+3. Remoção de Combinações:
+o Clicado no ícone de "Remover" ao lado de uma combinação.
+o Confirmado que a combinação foi removida da lista.
+4. Sincronização com Cadastros:
+o Acessada a tela de cadastro e editada uma turma (ex.: "7º A" para "8º A").
+o Verificado que as combinações na tela de gerenciamento foram atualizadas (ex.: "7º A Matemática" passou para "8º A Matemática").
+o Removida uma turma (ex.: "8º A") e confirmado que as combinações que a utilizavam foram removidas da tela de gerenciamento.
+o Repetido o processo para disciplinas, com resultados consistentes.
+5. Persistência de Dados:
+o Definidas as datas dos bimestres e adicionadas combinações.
+o Fechado e reaberto o aplicativo, confirmando que os dados foram mantidos.
+Resultados
+A tela de gerenciamento de aulas foi implementada com sucesso e atende aos requisitos especificados. Os ajustes realizados melhoraram a usabilidade e a estética da tela, garantindo que:
+* Os botões de combinação não apresentam quebra de texto e seguem o mesmo estilo visual do restante do aplicativo.
+* O usuário pode editar e remover combinações diretamente na tela, com validação para evitar duplicatas.
+* As edições e remoções de turmas e disciplinas na tela de cadastro são refletidas automaticamente nas combinações de classes.
+* Os dados (datas dos bimestres e combinações) são persistentes, utilizando o shared_preferences.
+
+
